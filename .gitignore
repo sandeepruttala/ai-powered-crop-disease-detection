@@ -1,0 +1,6 @@
+*.venv
+*.DS_Store
+static/*
+*__pycache__
+*.h5
+!static/css/

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Crop Disease Predictor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h2 class="logo">AI-POWERED CROP DISEASE ANALYSIS</h2>
+        <div class="language-select" id="google_translate_element"></div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="upload-container">
+                <h1>UPLOAD</h1>
+                <p>Detect crop diseases by uploading an image.</p>
+                <div class="container" align="center">
+                    {% if file_path %}
+                    <div class="result" align="center">
+                        <h2 class="image_display">{{ label }}</h2>
+                        <img class="img-area" src="{{ url_for('static', filename=file_path) }}" alt="Uploaded Image">
+                        <div class="button-group">
+                            <button class="btn btn-primary upload-another" type="button"
+                                onclick="window.location.href='/'">Upload Again</button>
+                            <button class="btn btn-secondary get-remidies" type="button"
+                                onclick="get_remidies('{{ label }}')">Get Remidies</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <form action="/" method="post" enctype="multipart/form-data">
+                        <input type="file" id="file" name="file" accept="image/*" hidden>
+                        <div class="img-area" data-img="">
+                            <i class='bx bxs-cloud-upload icon'></i>
+                            <h3>Upload Image</h3>
+                            <img id="previewImg" src="" alt="Image Preview" style="display:none;">
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-primary select-image" type="button">Select Image</button>
+                            <button class="btn btn-secondary submit-image" type="submit">Predict</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hero-content">
+                <h1>REMEDIES</h1>
+                <div class="remidies">
+                    Remidies for the disease will be displayed here.
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        function get_remidies(disease_name) {
+            const remidies = document.querySelector('.remidies');
+            remidies.innerHTML = 'Loading...';
+            var url = '/remidies';
+            var data = { disease_name: disease_name };
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    remidies.innerHTML = response.remidies;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        const fileInput = document.getElementById('file');
+        const imgArea = document.querySelector('.img-area');
+        const selectImageBtn = document.querySelector('.select-image');
+        const previewImg = document.getElementById('previewImg');
+
+        selectImageBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    previewImg.src = event.target.result;
+                    previewImg.style.display = 'block';
+                    imgArea.classList.add('show-img');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                // includedLanguages: 'en,fr,es,hi,zh',
+                layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>

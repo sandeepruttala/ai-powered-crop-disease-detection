@@ -12,7 +12,7 @@ import gridfs
 from bson import ObjectId
 from datetime import datetime
 
-MONGO_URI = "mongodb+srv://dev-user-1:pass-word-dev@cluster0.hdz2b.mongodb.net/"
+MONGO_URI = os.environ.get("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["crop_disease_db"]
 fs = gridfs.GridFS(db)

@@ -7,13 +7,24 @@ from groq import Groq
 from flask import jsonify
 from flask_cors import CORS
 import markdown
+from pymongo import MongoClient
+import gridfs
+from bson import ObjectId
+from datetime import datetime
+
+MONGO_URI = "mongodb+srv://dev-user-1:pass-word-dev@cluster0.hdz2b.mongodb.net/"
+client = MongoClient(MONGO_URI)
+db = client["crop_disease_db"]
+fs = gridfs.GridFS(db)
+collection = db["images"]
+
 
 app = Flask(__name__)
 CORS(app)
 
 # Set up working directory and model path
 working_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = f"{working_dir}/ai_crop.h5"
+model_path = f"{working_dir}/models/ai_crop_final.h5"
 
 # Load the pre-trained model
 model = tf.keras.models.load_model(model_path)
@@ -90,7 +101,21 @@ def upload_file():
             file_path = os.path.join('static', file.filename)
             print(f"Saving file to {file_path}")
             file.save(file_path)
+            
+            # Get the prediction label
             label = predict_image_class(model, file_path)
+
+            # Get current timestamp
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Store in MongoDB
+            prediction_data = {
+                "filename": file.filename,
+                "label": label,
+                "timestamp": timestamp
+            }
+            collection.insert_one(prediction_data)  # Save to MongoDB
+            
             return render_template('app.html', label=label, file_path=file.filename)
     return render_template('app.html')
 
@@ -143,6 +168,13 @@ def remidies():
         processed = markdown.markdown(raw)
         response = {'remidies': processed}
         return jsonify(response)
+    
+@app.route('/history')
+def history():
+    # Fetch the last 10 predictions (latest first)
+    predictions = list(collection.find().sort("timestamp", -1).limit(10))
+
+    return render_template('history.html', predictions=predictions)
 
 if __name__ == '__main__':
     app.run(debug=True)

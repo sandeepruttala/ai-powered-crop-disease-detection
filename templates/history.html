@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction History</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            padding: 100px;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #fff;
+            padding-bottom: 10px;
+            color: black;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Prediction History</h2>
+    <table>
+        <tr>
+            <th>Image</th>
+            <th>Predicted Label</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for prediction in predictions %}
+        <tr>
+            <td><img src="{{ url_for('static', filename=prediction.filename) }}" alt="Uploaded Image"></td>
+            <td>{{ prediction.label }}</td>
+            <td>{{ prediction.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/" style="text-decoration: none" class="btn btn-secondary">Back</a>
+</body>
+
+</html>

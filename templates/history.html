@@ -4,8 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <title>Prediction History</title>
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0 20px;
+            height: 100vh;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -34,6 +42,7 @@
         .btn {
             margin-top: 20px;
             padding: 0.75rem 1.5rem;
+            margin-top: 10px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -51,7 +60,8 @@
 </head>
 
 <body>
-    <h2>Prediction History</h2>
+    <h1>Prediction History</h1>
+    <a href="/" style="text-decoration: none" class="btn btn-secondary">Back</a>
     <table>
         <tr>
             <th>Image</th>
@@ -66,7 +76,6 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="/" style="text-decoration: none" class="btn btn-secondary">Back</a>
 </body>
 
 </html>
